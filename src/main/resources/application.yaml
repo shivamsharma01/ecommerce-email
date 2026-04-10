@@ -18,6 +18,12 @@ management:
 spring:
   application:
     name: email
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
   cloud:
     gcp:
       project-id: ${SPRING_CLOUD_GCP_PROJECT_ID:}
@@ -51,3 +57,5 @@ email:
   order-paid:
     enabled: ${EMAIL_ORDER_PAID_ENABLED:false}
     subscription: ${EMAIL_ORDER_PAID_SUBSCRIPTION:order-paid-email-sub}
+    # Idempotency keys under prefix mcart:email:order-paid:dedupe: (shared Redis; isolated by key namespace)
+    dedupe-ttl-hours: ${EMAIL_ORDER_PAID_DEDUPE_TTL_HOURS:24}

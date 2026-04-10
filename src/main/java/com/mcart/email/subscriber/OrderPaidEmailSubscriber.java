@@ -2,10 +2,9 @@ package com.mcart.email.subscriber;
 
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.github.benmanes.caffeine.cache.Cache;
-import com.github.benmanes.caffeine.cache.Caffeine;
 import com.google.cloud.spring.pubsub.core.PubSubTemplate;
 import com.google.cloud.spring.pubsub.support.BasicAcknowledgeablePubsubMessage;
+import com.mcart.email.redis.OrderPaidReceiptDedupe;
 import com.mcart.email.service.OrderPaidEmailSender;
 import jakarta.annotation.PostConstruct;
 import jakarta.annotation.PreDestroy;
@@ -14,8 +13,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.autoconfigure.condition.ConditionalOnProperty;
 import org.springframework.stereotype.Component;
-
-import java.util.concurrent.TimeUnit;
 
 @Component
 @RequiredArgsConstructor
@@ -29,14 +26,10 @@ public class OrderPaidEmailSubscriber {
 	private final OrderPaidEmailSender orderPaidEmailSender;
 	private final ObjectMapper objectMapper;
 	private final PubSubTemplate pubSubTemplate;
+	private final OrderPaidReceiptDedupe receiptDedupe;
 
 	@Value("${email.order-paid.subscription:" + DEFAULT_SUBSCRIPTION + "}")
 	private String subscriptionName;
-
-	private final Cache<String, Boolean> sentOrderIds = Caffeine.newBuilder()
-			.maximumSize(50_000)
-			.expireAfterWrite(24, TimeUnit.HOURS)
-			.build();
 
 	private com.google.cloud.pubsub.v1.Subscriber subscriber;
 
@@ -63,18 +56,20 @@ public class OrderPaidEmailSubscriber {
 				return;
 			}
 			String orderId = root.path("orderId").asText(null);
-			if (orderId != null && !orderId.isBlank()) {
-				if (sentOrderIds.getIfPresent(orderId) != null) {
-					log.debug("Duplicate delivery for order {}; ack without resending", orderId);
-					message.ack();
-					return;
+			if (orderId != null && !orderId.isBlank() && !receiptDedupe.tryAcquire(orderId)) {
+				log.debug("Duplicate delivery for order {}; ack without resending", orderId);
+				message.ack();
+				return;
+			}
+			try {
+				orderPaidEmailSender.sendReceipt(root);
+				message.ack();
+			} catch (Exception sendEx) {
+				if (orderId != null && !orderId.isBlank()) {
+					receiptDedupe.release(orderId);
 				}
+				throw sendEx;
 			}
-			orderPaidEmailSender.sendReceipt(root);
-			if (orderId != null && !orderId.isBlank()) {
-				sentOrderIds.put(orderId, Boolean.TRUE);
-			}
-			message.ack();
 		} catch (Exception ex) {
 			log.error("Failed to process order-paid message", ex);
 			message.nack();
