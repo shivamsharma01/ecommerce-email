@@ -51,7 +51,7 @@ email:
     enabled: ${EMAIL_PUBSUB_ENABLED:false}
     subscription: ${EMAIL_PUBSUB_SUBSCRIPTION:email-verification-events-sub}
   verification:
-    base-url: ${EMAIL_VERIFICATION_BASE_URL:}
+    base-url: ${EMAIL_VERIFICATION_BASE_URL:http://localhost:8081}
   order:
     base-url: ${EMAIL_ORDER_BASE_URL:}
   order-paid:

@@ -1,0 +1,34 @@
+server:
+  port: ${SERVER_PORT:8089}
+
+spring:
+  data:
+    redis:
+      host: ${REDIS_HOST:localhost}
+      port: ${REDIS_PORT:6379}
+      password: ${REDIS_PASSWORD:}
+      timeout: 2s
+  cloud:
+    gcp:
+      project-id: "${MCART_GCP_PROJECT_ID:${SPRING_CLOUD_GCP_PROJECT_ID:my-project-chat-ai-487408}}"
+      credentials:
+        location: ${GCP_CREDENTIALS_PATH:}
+      pubsub:
+        enabled: ${SPRING_CLOUD_GCP_PUBSUB_ENABLED:true}
+  mail:
+    port: ${SPRING_MAIL_PORT:587}
+    username: ${SPRING_MAIL_USERNAME:}
+    password: ${SPRING_MAIL_PASSWORD:}
+
+email:
+  pubsub:
+    enabled: ${EMAIL_PUBSUB_ENABLED:true}
+    subscription: ${EMAIL_PUBSUB_SUBSCRIPTION:email-verification-events-sub}
+  verification:
+    base-url: ${EMAIL_VERIFICATION_BASE_URL:http://localhost:8081}
+  order:
+    base-url: ${EMAIL_ORDER_BASE_URL:}
+  order-paid:
+    enabled: ${EMAIL_ORDER_PAID_ENABLED:true}
+    subscription: ${EMAIL_ORDER_PAID_SUBSCRIPTION:order-paid-email-sub}
+    dedupe-ttl-hours: ${EMAIL_ORDER_PAID_DEDUPE_TTL_HOURS:24}
