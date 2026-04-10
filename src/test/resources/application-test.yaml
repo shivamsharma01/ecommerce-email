@@ -1,0 +1,11 @@
+spring:
+  cloud:
+    gcp:
+      pubsub:
+        enabled: false
+
+email:
+  pubsub:
+    enabled: false
+  verification:
+    base-url: http://localhost:8081
