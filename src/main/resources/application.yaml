@@ -46,3 +46,8 @@ email:
     subscription: ${EMAIL_PUBSUB_SUBSCRIPTION:email-verification-events-sub}
   verification:
     base-url: ${EMAIL_VERIFICATION_BASE_URL:}
+  order:
+    base-url: ${EMAIL_ORDER_BASE_URL:}
+  order-paid:
+    enabled: ${EMAIL_ORDER_PAID_ENABLED:false}
+    subscription: ${EMAIL_ORDER_PAID_SUBSCRIPTION:order-paid-email-sub}

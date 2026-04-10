@@ -7,5 +7,7 @@ spring:
 email:
   pubsub:
     enabled: false
+  order-paid:
+    enabled: false
   verification:
     base-url: http://localhost:8081
