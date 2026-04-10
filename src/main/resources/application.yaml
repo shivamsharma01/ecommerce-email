@@ -1,5 +1,5 @@
 server:
-  port: ${SERVER_PORT:8089}
+  port: ${SERVER_PORT:8090}
 
 management:
   endpoints:

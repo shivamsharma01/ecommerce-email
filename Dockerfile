@@ -22,7 +22,7 @@ COPY --from=builder --chown=spring:spring /app/app.jar /app/app.jar
 
 USER spring:spring
 
-EXPOSE 8089
+EXPOSE 8090
 
 ENV JAVA_OPTS="-XX:+UseContainerSupport -XX:MaxRAMPercentage=75.0 -XX:+ExitOnOutOfMemoryError"
 
