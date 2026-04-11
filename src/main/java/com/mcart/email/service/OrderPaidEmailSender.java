@@ -80,7 +80,7 @@ public class OrderPaidEmailSender {
 		helper.setSubject("Your order receipt — " + (orderId != null ? orderId : "MCart"));
 		helper.setText(html, true);
 		mailSender.send(message);
-		log.info("Sent order receipt email for order {} to {}", orderId, to);
+		log.info("Sent order receipt email orderId={}", orderId);
 	}
 
 	private static String text(JsonNode n, String field) {

@@ -47,7 +47,7 @@ public class VerificationEmailSender {
 		helper.setSubject(VERIFICATION_SUBJECT);
 		helper.setText(buildEmailBody(verificationLink), true);
 		mailSender.send(message);
-		log.info("Verification email sent to {}", to);
+		log.info("Verification email dispatched");
 	}
 
 	private String buildEmailBody(String verificationLink) {
