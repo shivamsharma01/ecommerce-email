@@ -6,7 +6,8 @@ spring:
     redis:
       host: ${REDIS_HOST:localhost}
       port: ${REDIS_PORT:6379}
-      password: ${REDIS_PASSWORD:}
+      # Match auth service local default (see auth/src/main/resources/application-local.yaml)
+      password: ${REDIS_PASSWORD:myStrongRedisPassword}
       timeout: 2s
   cloud:
     gcp:
