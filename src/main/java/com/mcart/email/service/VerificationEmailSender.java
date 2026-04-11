@@ -26,7 +26,13 @@ public class VerificationEmailSender {
 	@Value("${email.verification.base-url}")
 	private String baseUrl;
 
-	@Value("${spring.mail.username:noreply@localhost}")
+	/** Optional override; when blank, {@code spring.mail.username} is used (must be non-blank for SMTP). */
+	@Value("${email.verification.from:}")
+	private String fromOverride;
+
+	@Value("${spring.mail.username:}")
+	private String mailUsername;
+
 	private String fromEmail;
 
 	@PostConstruct
@@ -34,6 +40,13 @@ public class VerificationEmailSender {
 		if (baseUrl == null || baseUrl.isBlank()) {
 			throw new IllegalStateException("email.verification.base-url must be set (EMAIL_VERIFICATION_BASE_URL).");
 		}
+		String from = fromOverride != null && !fromOverride.isBlank() ? fromOverride.trim() : mailUsername.trim();
+		if (from.isBlank()) {
+			throw new IllegalStateException(
+					"Verification email From address is empty. Set SPRING_MAIL_USERNAME in email-secrets "
+							+ "(SMTP login / sender for Gmail) and/or EMAIL_VERIFICATION_FROM.");
+		}
+		fromEmail = from;
 	}
 
 	public void sendVerificationEmail(String to, String token) throws MessagingException {

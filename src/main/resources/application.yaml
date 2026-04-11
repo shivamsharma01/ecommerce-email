@@ -52,6 +52,8 @@ email:
     subscription: ${EMAIL_PUBSUB_SUBSCRIPTION:email-verification-events-sub}
   verification:
     base-url: ${EMAIL_VERIFICATION_BASE_URL:http://localhost:8081}
+    # When set, used as From; otherwise spring.mail.username (SPRING_MAIL_USERNAME) must be non-blank.
+    from: ${EMAIL_VERIFICATION_FROM:}
   order:
     base-url: ${EMAIL_ORDER_BASE_URL:}
   order-paid:

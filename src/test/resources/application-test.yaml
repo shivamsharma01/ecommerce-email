@@ -1,4 +1,6 @@
 spring:
+  mail:
+    username: test-sender@example.com
   autoconfigure:
     exclude:
       - org.springframework.boot.autoconfigure.data.redis.RedisAutoConfiguration
